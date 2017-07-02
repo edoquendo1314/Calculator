@@ -1,11 +1,30 @@
 package calculator;
+import java.text.DecimalFormat;
 import java.util.EmptyStackException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Stack;
 
 public class Calculator {
 
+	static HashMap<String,Integer> precedenceMap;	
+	
+	// initialize variables here
+	
+	static {
+		precedenceMap = new HashMap();
+		precedenceMap.put("sin", 5);
+		precedenceMap.put("cos", 5);
+		precedenceMap.put("tan", 5);
+		precedenceMap.put("sqrt", 4);
+		precedenceMap.put("^", 4);
+		precedenceMap.put("*", 3);
+		precedenceMap.put("/", 3);
+		precedenceMap.put("+", 2);
+		precedenceMap.put("-", 2);
+	}
+	
 	public static int countBrackets(String[] array){
 		int count = 0;
 		for(String s: array){
@@ -15,6 +34,112 @@ public class Calculator {
 		}
 		
 		return count;
+	}
+	
+	/**
+	 * 
+	 * @param String original
+	 * @param String toInsert
+	 * @param int location
+	 * @return String
+	 * 
+	 * Inserts the string toInsert at location.
+	 * Example: String original = "string"
+	 *          int location = 0  ("s")
+	 *          String toInsert = "this is a "
+	 *          
+	 *          insertString(original, toInsert, location) returns "this is a string"
+	 */
+	public static String insertString(String original, String toInsert, int location){
+		String result = "";
+		
+		if(location >= original.length()){
+			return original;
+		}
+		
+		result = original.substring(0, location) + toInsert + original.substring(location, original.length());
+		
+		return result;
+	}
+	
+	// need to insert white spaces before running this function
+	public static String insertMultiplication(String equation){
+		// case 1  (a)x
+		// case 2   a(x) = a * (x)
+		// case 3  (a)(x) = (a) * (x)
+		
+		int i = 0;
+		while(i < equation.length()){
+			
+			i = nextTokenLocation(equation, i);
+			if(i >= equation.length()){
+				return equation;
+			}
+			
+			String currentToken = currentToken(equation, i);
+			
+			// case 1 and 3
+			if(equation.charAt(i) == ')'){
+				if(i + 1 < equation.length()){
+					int nextTokenLocation = nextTokenLocation(equation, i+1);
+					
+					String nextToken = nextToken(equation, i+1);
+					
+					if(nextTokenLocation < equation.length()){
+						if(equation.charAt(nextTokenLocation) == '(' || isNumber(nextToken) || is1ArgFunction(nextToken)){
+							//equation = equation.substring(0, i+1) + " *" + equation.substring(i+1, equation.length());
+							equation = insertString(equation, " *", i+1);
+							
+							i += 2 + nextToken.length();
+						}
+					}
+				}
+				
+			}else if(isNumber(currentToken) && i + currentToken.length() < equation.length()){
+				String nextToken = nextToken(equation, i + currentToken.length());
+				if(nextToken.equals("(") || is1ArgFunction(nextToken)){
+					//equation = equation.substring(0, i+currentToken.length()) + " *" + equation.substring(i+currentToken.length(), equation.length());
+					equation = insertString(equation, " *", i+currentToken.length());
+					i += 2 + nextToken.length();
+				}
+			}
+			
+			i++;
+			
+		}
+		
+		return equation;
+	}
+	
+	public static int nextTokenLocation(String equation, int location){
+		while(location < equation.length() && equation.charAt(location) == ' '){
+			location++;
+		}
+		return location;
+	}
+	
+	public static String nextToken(String equation, int location){
+		String token = "";
+		
+		int i = nextTokenLocation(equation, location);
+		
+		while(i < equation.length() && equation.charAt(i) != ' '){
+			token += equation.charAt(i);
+			i++;
+		}
+		
+		return token;
+	}
+	
+	public static String currentToken(String equation, int currentLocation){
+		String token = "";
+		
+		while(currentLocation < equation.length() && equation.charAt(currentLocation) != ' '){
+			token += equation.charAt(currentLocation);
+			currentLocation++;
+		}
+		
+		return token;		
 	}
 	
 	public static String insertWhiteSpaces(String equation){
@@ -36,17 +161,36 @@ public class Calculator {
 				i += 2;
 			}
 			
+			String currentString = equation.substring(i, i+1);
+			
+			if(!isOperator(currentString) && !isBracket(currentString) && !currentString.equals(" ") && !isNumber(currentString)){
+				String token = "";
+				int j = i;
+				
+				String tmpString = equation.substring(j, j+1);
+				while(!isOperator(tmpString) && !isBracket(tmpString) && !tmpString.equals(" ") && j < equation.length()){
+					token += tmpString;
+					j++;
+					tmpString = equation.substring(j, j+1);
+				}
+				
+				equation = insertString(equation, " ", i);
+				equation = insertString(equation, " ", i + 1 + token.length());
+				
+				i += 1 + token.length();
+			}
+			
 			i++;
 		}
 		
 		return equation;
 	}
 	
+	// white spaces and multiplication symbols must be inserted before running this function
 	public static String[] infixToPostfix(String string){
-		string = insertWhiteSpaces(string);
+		string = string.trim(); // remove leading and trailing white spaces
 		String[] array = string.split("\\s+");
 		String[] outputArray = new String[array.length - countBrackets(array)];
-		
 		LinkedList<String> fifo = new LinkedList();
 		Stack<String> operatorStack = new Stack();
 		
@@ -96,6 +240,14 @@ public class Calculator {
 		return outputArray;
 	}
 	
+	public static double calculate(String equation){
+		equation = insertWhiteSpaces(equation);
+		equation = insertMultiplication(equation);
+		String[] array = infixToPostfix(equation);
+		double result = evaluatePostfix(array);
+		return result;
+	}
+	
 	public static boolean isNumber(String string){
 		return string.matches("\\d+(\\.\\d+)?");
 	}
@@ -141,14 +293,12 @@ public class Calculator {
 	}
 	
 	public static int getPrecedence(String s){
-		switch(s){
-		case "sin": return 5;
-		case "^": return 4;
-		case "*":
-		case "/": return 3;
-		case "+":
-		case "-": return 2;
-		default: return 0;
+		s = s.toLowerCase();
+		try{
+			int precedence = precedenceMap.get(s);
+			return precedence;
+		}catch(NullPointerException e){
+			return 0;
 		}
 	}
 	
@@ -197,41 +347,49 @@ public class Calculator {
 	
 	public static double runFunction(String func, String operand){
 		double n = Double.parseDouble(operand);
-		
-		
+
 		switch(func){
-		case "sin": return Math.sin(Math.toRadians(n));
-		case "tan": return Math.tan(Math.toRadians(n));
-		case "cos": return Math.cos(Math.toRadians(n));
-		case "sqrt": return Math.sqrt(n);
+		case "sin": return roundDouble(Math.sin(Math.toRadians(n)));
+		case "tan": return roundDouble(Math.tan(Math.toRadians(n)));
+		case "cos": return roundDouble(Math.cos(Math.toRadians(n)));
+		case "sqrt": return roundDouble(Math.sqrt(n));
 		default: return 0.0;
 		}
 	}
 	
+	public static double roundDouble(double n){
+		return round15(n+1) - 1;
+	}
 	
-	public Calculator() {
-		// TODO Auto-generated constructor stub
-	
+	public static double round15(double x){
+		DecimalFormat twoDForm = new DecimalFormat("0.##############E0");
+		String str = twoDForm.format(x);
+		return Double.valueOf(str);
 	}
 
 	public static void main(String[] args){
 		
 		Scanner keyboard = new Scanner(System.in);
+		String eq = "";
 		
-		String eq = keyboard.nextLine();
+		while(!eq.equals("exit")){
+			eq = keyboard.nextLine();
+			
+//			eq = insertWhiteSpaces(eq);
+//			eq = insertMultiplication(eq);
+//			System.out.println("Prefix: " + eq);
+//			
+//			String[] array = infixToPostfix(eq);
+//			
+//			System.out.print("Postfix: ");
+//			for(String s: array){
+//				System.out.print(s + " ");
+//			}
 
-		eq = insertWhiteSpaces(eq);
-		System.out.println("Prefix: " + eq);
-		
-		String[] array = infixToPostfix(eq);
-		
-		System.out.print("Postfix: ");
-		for(String s: array){
-			System.out.print(s + " ");
+			System.out.println(" = " + calculate(eq));	
 		}
 		
-		System.out.println(" = " + evaluatePostfix(array));
-		
+
 	}
 	
 }
