@@ -55,7 +55,7 @@ public class Calculator {
 		while(i < array.length){
 			if(isNumber(array[i])){
 				fifo.add(array[i]);
-			}else if(isOperator(array[i])){
+			}else if(isOperator(array[i]) || is1ArgFunction(array[i])){
 				try{
 					while(!operatorStack.isEmpty() && 
 							getPrecedence(operatorStack.peek()) >= getPrecedence(array[i])){
@@ -110,6 +110,18 @@ public class Calculator {
 		return bool;
 	}
 	
+	public static boolean is1ArgFunction(String string){
+		
+		switch(string){
+		case "sin":
+		case "tan":
+		case "cos":
+		case "sqrt": return true;
+		default: return false;
+		}
+		
+	}
+	
 	public static double operate(String operator, String arg1, String arg2){
 		double result = 0f;
 		
@@ -130,6 +142,7 @@ public class Calculator {
 	
 	public static int getPrecedence(String s){
 		switch(s){
+		case "sin": return 5;
 		case "^": return 4;
 		case "*":
 		case "/": return 3;
@@ -150,7 +163,18 @@ public class Calculator {
 		while(i < array.length){
 			if(isNumber(array[i])){
 				stack.push(array[i]);
-			}else{
+			}else if(is1ArgFunction(array[i])){
+				try{
+					String operand = stack.pop();
+					double curResult = runFunction(array[i], operand);
+					
+					stack.push(""+curResult);
+					result = curResult;
+				}catch(Exception e){
+					System.out.println("something wrong with function processing");
+				}
+			}
+			else{
 				try{
 					String operand2 = stack.pop();
 					String operand1 = stack.pop();
@@ -171,7 +195,19 @@ public class Calculator {
 		return result;
 	}
 	
-
+	public static double runFunction(String func, String operand){
+		double n = Double.parseDouble(operand);
+		
+		
+		switch(func){
+		case "sin": return Math.sin(Math.toRadians(n));
+		case "tan": return Math.tan(Math.toRadians(n));
+		case "cos": return Math.cos(Math.toRadians(n));
+		case "sqrt": return Math.sqrt(n);
+		default: return 0.0;
+		}
+	}
+	
 	
 	public Calculator() {
 		// TODO Auto-generated constructor stub
