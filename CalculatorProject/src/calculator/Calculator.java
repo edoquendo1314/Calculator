@@ -24,8 +24,15 @@ public class Calculator {
 		operatorMap.put("sin", new Operator("sin", 1, 5));
 		operatorMap.put("cos", new Operator("cos", 1, 5));
 		operatorMap.put("tan", new Operator("tan", 1, 5));
+		operatorMap.put("cot", new Operator("cot", 1, 5));
+		operatorMap.put("sec", new Operator("sec", 1, 5));
+		operatorMap.put("csc", new Operator("csc", 1, 5));
+		
+		
 		operatorMap.put("sqrt", new Operator("sqrt", 1, 4));
 		operatorMap.put("abs", new Operator("abs", 1, 5));
+		operatorMap.put("ln", new Operator("ln", 1, 5));
+				
 		
 		// 2 arg functions
 		operatorMap.put("log", new Operator("log", 2, 5));
@@ -37,20 +44,8 @@ public class Calculator {
 		operatorMap.put("+", new Operator("/", 2, 2));
 		operatorMap.put("-", new Operator("/", 2, 2));
 	}
-	
-	/** returns the precedence of the operator represented by String s
-	**/
-	public static int getPrecedence(String s){
-		s = s.toLowerCase();
-		try{
-			int precedence = operatorMap.get(s).getPrecedence();
-			return precedence;
-		}catch(NullPointerException e){
-			return 0;
-		}
-	}	
-	
-	/** does the appropriate operation
+
+	/** performs the appropriate operation
 	*   eg: operate("*", "2", "3") will return 6 (as a double)
 	**/
 	public static double operate(String operator, String arg1, String arg2){
@@ -70,28 +65,59 @@ public class Calculator {
 			case "log": return logN(a, b);
 			default: return -1f;
 		}
-	}	
+	}		
 
-	public static double logN(double base, double n){
-		double result = Math.log(n) / Math.log(base);
-		return result;
-	}
-	
 	/** runs the appropriate function
 	 ** eg runFunction("sin", 90) will return 1.0 (as a double)
 	 **/
 	public static double runFunction(String func, String operand){
 		double n = Double.parseDouble(operand);
-
+		
 		switch(func){
 		case "sin": return roundDouble(Math.sin(Math.toRadians(n)));
 		case "tan": return roundDouble(Math.tan(Math.toRadians(n)));
 		case "cos": return roundDouble(Math.cos(Math.toRadians(n)));
 		case "sqrt": return roundDouble(Math.sqrt(n));
 		case "abs": return roundDouble(Math.abs(n));
+		case "ln": return roundDouble(Math.log(n));
+		case "cot": 
+			if(runFunction("tan", operand) == 0){
+				System.out.println("Cannot divide by 0");
+				return 0;
+			}
+			return roundDouble(1.0/runFunction("tan", operand));
+		case "sec": 
+			if(runFunction("cos", operand) == 0){
+				System.out.println("Cannot divide by 0");
+				return 0;
+			}
+			return roundDouble(1.0/runFunction("cos", operand));
+		case "csc": 
+			if(runFunction("sin", operand) == 0){
+				System.out.println("Cannot divide by 0");
+				return 0;
+			}
+			return roundDouble(1.0/runFunction("sin", operand));
 		default: return 0.0;
+		}			
+	}		
+	
+	/** returns the precedence of the operator represented by String s
+	**/
+	public static int getPrecedence(String s){
+		s = s.toLowerCase();
+		try{
+			int precedence = operatorMap.get(s).getPrecedence();
+			return precedence;
+		}catch(NullPointerException e){
+			return 0;
 		}
 	}	
+
+	public static double logN(double base, double n){
+		double result = Math.log(n) / Math.log(base);
+		return result;
+	}
 	
 	/** converts user entered equation into postfix notation
 	 ** eg:  "3+4*6" becomes { 3, 4, 6, *, + } in array form
