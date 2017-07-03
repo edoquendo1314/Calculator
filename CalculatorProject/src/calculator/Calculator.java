@@ -15,6 +15,8 @@ public class Calculator {
 	 * Edit functions below to add more operators/functions to parse and evaluate
 	 */
 	
+	// add any new operators/functions to the operatorMap in the static block below
+	// Operator constructor takes: String name, int numArguments, int precedence
 	static {
 		operatorMap = new HashMap();
 		
@@ -36,6 +38,8 @@ public class Calculator {
 		operatorMap.put("-", new Operator("/", 2, 2));
 	}
 	
+	/** returns the precedence of the operator represented by String s
+	**/
 	public static int getPrecedence(String s){
 		s = s.toLowerCase();
 		try{
@@ -46,6 +50,9 @@ public class Calculator {
 		}
 	}	
 	
+	/** does the appropriate operation
+	*   eg: operate("*", "2", "3") will return 6 (as a double)
+	**/
 	public static double operate(String operator, String arg1, String arg2){
 		double result = 0f;
 		
@@ -64,6 +71,9 @@ public class Calculator {
 		}
 	}	
 
+	/** runs the appropriate function
+	 ** eg runFunction("sin", 90) will return 1.0 (as a double)
+	 **/
 	public static double runFunction(String func, String operand){
 		double n = Double.parseDouble(operand);
 
@@ -76,7 +86,12 @@ public class Calculator {
 		default: return 0.0;
 		}
 	}	
-	// white spaces and multiplication symbols must be inserted before running this function
+	
+	/** converts user entered equation into postfix notation
+	 ** eg:  "3+4*6" becomes { 3, 4, 6, *, + } in array form
+	 ** white spaces and multiplication symbols must be inserted before running this function
+	 ** otherwise it will not work as intended
+	 **/
 	public static String[] infixToPostfix(String string){
 		string = string.trim(); // remove leading and trailing white spaces
 		String[] array = string.split("\\s+");
@@ -130,6 +145,14 @@ public class Calculator {
 		return outputArray;
 	}
 	
+	/**
+	 * Given an equation (eg, "3+4(6)")
+	 * 
+	 * It will insert white spaces and multiplication symbols as necessary
+	 * "3+4(6)" becomes "3 + 4 * (6)"
+	 * Then it will evaluate the equation and return a double
+	 * calculate("3+4(6)") will return 27.0 
+	 */
 	public static double calculate(String equation){
 		equation = StrManip.insertWhiteSpaces(equation);
 		equation = StrManip.insertMultiplication(equation);
@@ -138,6 +161,13 @@ public class Calculator {
 		return result;
 	}
 	
+	/**
+	 * Given a string array of an equation in postfix form
+	 * (such as the one from infixToPostfix function)
+	 * it will return a double that evaluates the equation
+	 * 
+	 * (see the calculate function above for the entire process)
+	 */
 	public static double evaluatePostfix(String[] array){
 		
 		Stack<String> stack = new Stack();
@@ -181,6 +211,11 @@ public class Calculator {
 		return result;
 	}
 	
+	/**
+	 *  This function is to avoid rounding errors from floating point arithmetic
+	 *  It works by adding 1 to n, rounding it to 15 places, then subtracting 1
+	 *  This was primarily for trig functions like sin(180) giving weird values instead of 0
+	 */
 	public static double roundDouble(double n){
 		return round15(n+1) - 1;
 	}
