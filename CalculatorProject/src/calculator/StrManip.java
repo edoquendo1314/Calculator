@@ -220,7 +220,7 @@ public class StrManip {
 	}
 	
 	public static boolean isBracket(String string){
-		return string.equals("(") || string.equals(")") || string.equals(",");
+		return string.equals("(") || string.equals(")") || string.equals(",") || string.equals("x");
 	}
 	
 	public static boolean isOperator(String string){
