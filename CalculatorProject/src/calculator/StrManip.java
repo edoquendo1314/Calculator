@@ -126,6 +126,7 @@ public class StrManip {
 			
 			String currentString = equation.substring(i, i+1);
 			
+			// insert white spaces around functions (ie: log, sin, cos, etc)
 			if(!isOperator(currentString) && !isBracket(currentString) && !currentString.equals(" ") && !isNumber(currentString)){
 				String token = "";
 				int j = i;
@@ -219,7 +220,7 @@ public class StrManip {
 	}
 	
 	public static boolean isBracket(String string){
-		return string.equals("(") || string.equals(")");
+		return string.equals("(") || string.equals(")") || string.equals(",");
 	}
 	
 	public static boolean isOperator(String string){
@@ -243,7 +244,7 @@ public class StrManip {
 	public static int countBrackets(String[] array){
 		int count = 0;
 		for(String s: array){
-			if(s.equals("(") || s.equals(")")){
+			if(s.equals("(") || s.equals(")") || s.equals(",")){
 				count++;
 			}
 		}

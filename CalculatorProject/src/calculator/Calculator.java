@@ -67,10 +67,16 @@ public class Calculator {
 			case "*": return a*b;
 			case "/": return a/b;
 			case "^": return Math.pow(a, b);
+			case "log": return logN(a, b);
 			default: return -1f;
 		}
 	}	
 
+	public static double logN(double base, double n){
+		double result = Math.log(n) / Math.log(base);
+		return result;
+	}
+	
 	/** runs the appropriate function
 	 ** eg runFunction("sin", 90) will return 1.0 (as a double)
 	 **/
@@ -104,7 +110,7 @@ public class Calculator {
 		while(i < array.length){
 			if(StrManip.isNumber(array[i])){
 				fifo.add(array[i]);
-			}else if(StrManip.isOperator(array[i]) || StrManip.is1ArgFunction(array[i])){
+			}else if(StrManip.isOperator(array[i]) || StrManip.is1ArgFunction(array[i]) || array[i].equals("log")){
 				try{
 					while(!operatorStack.isEmpty() && 
 							getPrecedence(operatorStack.peek()) >= getPrecedence(array[i])){
@@ -234,11 +240,25 @@ public class Calculator {
 		
 		while(!eq.equals("exit")){
 			eq = keyboard.nextLine();
+			//testFunction(eq);
 			
 			System.out.println(" = " + calculate(eq));	
 		}
+	}
+	
+	// using this function to print out different things and test functions
+	// helpful for keeping the main function clean
+	// we can delete this once we're done
+	public static void testFunction(String eq){
+		eq = StrManip.insertWhiteSpaces(eq);
+		eq = StrManip.insertMultiplication(eq);
 		
-
+		String[] array = infixToPostfix(eq);
+		
+		for(String s: array){
+			System.out.print(s + " ");
+		}
+		System.out.println();		
 	}
 	
 }
