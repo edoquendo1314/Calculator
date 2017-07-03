@@ -1,5 +1,10 @@
 package calculator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class StrManip {
 
 	/**
@@ -250,8 +255,16 @@ public class StrManip {
 		return count;
 	}
 	
+	public static String[] tokenize(String equation){
+		equation = insertWhiteSpaces(equation);
+		equation = equation.trim();
+		
+		String[] array = equation.split("\\s+");
+		return array;
+	}
+	
 	public StrManip() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 }
