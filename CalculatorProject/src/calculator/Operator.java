@@ -1,5 +1,7 @@
 package calculator;
 
+import java.util.HashMap;
+
 public class Operator {
 
 	private int precedence;

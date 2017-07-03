@@ -1,10 +1,5 @@
 package calculator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class StrManip {
 
 	/**
@@ -100,7 +95,7 @@ public class StrManip {
 	 * @param equation
 	 * @return
 	 * 
-	 * Inserts white spaces before and after each operator or function in the equation.
+	 * Inserts white spaces before and after each operator/function/ or special character in the equation.
 	 * This is necessary for easier tokenization of the equation. 
 	 * Multiple white spaces are not a problem as the String.split method tokenizes correctly
 	 * regardless of the number of white spaces
@@ -109,7 +104,7 @@ public class StrManip {
 		
 		int i = 0;
 		while(i < equation.length()){
-			if(isOperator(equation.substring(i, i+1)) || isBracket(equation.substring(i, i+1))){
+			if(isOperator(equation.substring(i, i+1)) || isSpecialChar(equation.charAt(i))){
 				equation = equation.substring(0, i) + " " 
 						   + equation.substring(i, i+1) + " " 
 						   + equation.substring(i+1, equation.length());
@@ -127,12 +122,12 @@ public class StrManip {
 			String currentString = equation.substring(i, i+1);
 			
 			// insert white spaces around functions (ie: log, sin, cos, etc)
-			if(!isOperator(currentString) && !isBracket(currentString) && !currentString.equals(" ") && !isNumber(currentString)){
+			if(!isOperator(currentString) && !isSpecialChar(currentString) && !currentString.equals(" ") && !isNumber(currentString)){
 				String token = "";
 				int j = i;
 				
 				String tmpString = equation.substring(j, j+1);
-				while(!isOperator(tmpString) && !isBracket(tmpString) && !tmpString.equals(" ") && j < equation.length()){
+				while(!isOperator(tmpString) && !isSpecialChar(tmpString) && !tmpString.equals(" ") && j < equation.length()){
 					token += tmpString;
 					j++;
 					tmpString = equation.substring(j, j+1);
@@ -219,15 +214,38 @@ public class StrManip {
 		return string.matches("\\d+(\\.\\d+)?");
 	}
 	
-	public static boolean isBracket(String string){
+	public static boolean isSpecialChar(String string){
 		return string.equals("(") || string.equals(")") || string.equals(",") || string.equals("x");
 	}
+
+	/**
+	 * 
+	 * @param c
+	 * @return
+	 * 
+	 * Returns whether or not the given character is one of the following:
+	 * 
+	 * parentheses, comma, or the letter x
+	 */
+	public static boolean isSpecialChar(char c){
+		return c == '(' || c == ')' || c == ',' || c == 'x';
+	}	
 	
 	public static boolean isOperator(String string){
 		boolean bool = string.matches("\\+|-|\\*|/|\\^");
 		
 		return bool;
 	}
+
+	public static boolean isOperator(char c){
+		boolean bool = c == '+' || 
+				       c == '-' ||
+				       c == '*' ||
+				       c == '/' ||
+				       c == '^';
+		
+		return bool;
+	}	
 	
 	public static boolean is1ArgFunction(String string){
 		if(Calculator.operatorMap.containsKey(string.toLowerCase())){
@@ -241,7 +259,14 @@ public class StrManip {
 	 * Misc functions
 	 */
 	
-	public static int countBrackets(String[] array){
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 * 
+	 * Returns number of parentheses and commas
+	 */
+	public static int countSpecialChars(String[] array){
 		int count = 0;
 		for(String s: array){
 			if(s.equals("(") || s.equals(")") || s.equals(",")){

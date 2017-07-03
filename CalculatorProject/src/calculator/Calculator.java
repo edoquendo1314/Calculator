@@ -10,7 +10,6 @@ public class Calculator {
 
 	static HashMap<String, Operator> operatorMap;	
 	
-	
 	/*
 	 * Edit functions below to add more operators/functions to parse and evaluate
 	 */
@@ -18,7 +17,7 @@ public class Calculator {
 	// add any new operators/functions to the operatorMap in the static block below
 	// Operator constructor takes: String name, int numArguments, int precedence
 	static {
-		operatorMap = new HashMap();
+		operatorMap = new HashMap<String, Operator>();
 		
 		// single arg functions
 		operatorMap.put("sin", new Operator("sin", 1, 5));
@@ -27,7 +26,6 @@ public class Calculator {
 		operatorMap.put("cot", new Operator("cot", 1, 5));
 		operatorMap.put("sec", new Operator("sec", 1, 5));
 		operatorMap.put("csc", new Operator("csc", 1, 5));
-		
 		
 		operatorMap.put("sqrt", new Operator("sqrt", 1, 4));
 		operatorMap.put("abs", new Operator("abs", 1, 5));
@@ -49,7 +47,6 @@ public class Calculator {
 	*   eg: operate("*", "2", "3") will return 6 (as a double)
 	**/
 	public static double operate(String operator, String arg1, String arg2){
-		double result = 0f;
 		
 		double a = Double.parseDouble(arg1);
 		double b = Double.parseDouble(arg2);
@@ -127,16 +124,16 @@ public class Calculator {
 	public static String[] infixToPostfix(String string){
 		string = string.trim(); // remove leading and trailing white spaces
 		String[] array = string.split("\\s+");
-		String[] outputArray = new String[array.length - StrManip.countBrackets(array)];
-		LinkedList<String> fifo = new LinkedList();
-		Stack<String> operatorStack = new Stack();
+		String[] outputArray = new String[array.length - StrManip.countSpecialChars(array)];
+		LinkedList<String> fifo = new LinkedList<String>();
+		Stack<String> operatorStack = new Stack<String>();
 		
 		int i = 0;
 		
 		while(i < array.length){
 			if(StrManip.isNumber(array[i])){
 				fifo.add(array[i]);
-			}else if(StrManip.isOperator(array[i]) || StrManip.is1ArgFunction(array[i]) || array[i].equals("log")){
+			}else if(StrManip.isOperator(array[i]) || operatorMap.containsKey(array[i])){
 				try{
 					while(!operatorStack.isEmpty() && 
 							getPrecedence(operatorStack.peek()) >= getPrecedence(array[i])){
@@ -202,8 +199,7 @@ public class Calculator {
 	 */
 	public static double evaluatePostfix(String[] array){
 		
-		Stack<String> stack = new Stack();
-		LinkedList<String> fifo = new LinkedList();
+		Stack<String> stack = new Stack<String>();
 		double result = 0;
 		
 		int i = 0;
