@@ -8,23 +8,74 @@ import java.util.Stack;
 
 public class Calculator {
 
-	static HashMap<String,Integer> precedenceMap;	
+	static HashMap<String, Operator> operatorMap;	
 	
-	// initialize variables here
+	
+	/*
+	 * Edit functions below to add more operators/functions to parse and evaluate
+	 */
 	
 	static {
-		precedenceMap = new HashMap();
-		precedenceMap.put("sin", 5);
-		precedenceMap.put("cos", 5);
-		precedenceMap.put("tan", 5);
-		precedenceMap.put("sqrt", 4);
-		precedenceMap.put("^", 4);
-		precedenceMap.put("*", 3);
-		precedenceMap.put("/", 3);
-		precedenceMap.put("+", 2);
-		precedenceMap.put("-", 2);
+		operatorMap = new HashMap();
+		
+		// single arg functions
+		operatorMap.put("sin", new Operator("sin", 1, 5));
+		operatorMap.put("cos", new Operator("cos", 1, 5));
+		operatorMap.put("tan", new Operator("tan", 1, 5));
+		operatorMap.put("sqrt", new Operator("sqrt", 1, 4));
+		operatorMap.put("abs", new Operator("abs", 1, 5));
+		
+		// 2 arg functions
+		operatorMap.put("log", new Operator("log", 2, 5));
+		
+		// binary operators
+		operatorMap.put("^", new Operator("^", 2, 4));
+		operatorMap.put("*", new Operator("*", 2, 3));
+		operatorMap.put("/", new Operator("/", 2, 3));
+		operatorMap.put("+", new Operator("/", 2, 2));
+		operatorMap.put("-", new Operator("/", 2, 2));
 	}
 	
+	public static int getPrecedence(String s){
+		s = s.toLowerCase();
+		try{
+			int precedence = operatorMap.get(s).getPrecedence();
+			return precedence;
+		}catch(NullPointerException e){
+			return 0;
+		}
+	}	
+	
+	public static double operate(String operator, String arg1, String arg2){
+		double result = 0f;
+		
+		double a = Double.parseDouble(arg1);
+		double b = Double.parseDouble(arg2);
+		
+		operator = operator.toLowerCase();
+		
+		switch(operator){
+			case "+": return a+b;
+			case "-": return a-b;
+			case "*": return a*b;
+			case "/": return a/b;
+			case "^": return Math.pow(a, b);
+			default: return -1f;
+		}
+	}	
+
+	public static double runFunction(String func, String operand){
+		double n = Double.parseDouble(operand);
+
+		switch(func){
+		case "sin": return roundDouble(Math.sin(Math.toRadians(n)));
+		case "tan": return roundDouble(Math.tan(Math.toRadians(n)));
+		case "cos": return roundDouble(Math.cos(Math.toRadians(n)));
+		case "sqrt": return roundDouble(Math.sqrt(n));
+		case "abs": return roundDouble(Math.abs(n));
+		default: return 0.0;
+		}
+	}	
 	// white spaces and multiplication symbols must be inserted before running this function
 	public static String[] infixToPostfix(String string){
 		string = string.trim(); // remove leading and trailing white spaces
@@ -87,36 +138,6 @@ public class Calculator {
 		return result;
 	}
 	
-
-	
-	public static double operate(String operator, String arg1, String arg2){
-		double result = 0f;
-		
-		double a = Double.parseDouble(arg1);
-		double b = Double.parseDouble(arg2);
-		
-		operator = operator.toLowerCase();
-		
-		switch(operator){
-			case "+": return a+b;
-			case "-": return a-b;
-			case "*": return a*b;
-			case "/": return a/b;
-			case "^": return Math.pow(a, b);
-			default: return -1f;
-		}
-	}
-	
-	public static int getPrecedence(String s){
-		s = s.toLowerCase();
-		try{
-			int precedence = precedenceMap.get(s);
-			return precedence;
-		}catch(NullPointerException e){
-			return 0;
-		}
-	}
-	
 	public static double evaluatePostfix(String[] array){
 		
 		Stack<String> stack = new Stack();
@@ -160,18 +181,6 @@ public class Calculator {
 		return result;
 	}
 	
-	public static double runFunction(String func, String operand){
-		double n = Double.parseDouble(operand);
-
-		switch(func){
-		case "sin": return roundDouble(Math.sin(Math.toRadians(n)));
-		case "tan": return roundDouble(Math.tan(Math.toRadians(n)));
-		case "cos": return roundDouble(Math.cos(Math.toRadians(n)));
-		case "sqrt": return roundDouble(Math.sqrt(n));
-		default: return 0.0;
-		}
-	}
-	
 	public static double roundDouble(double n){
 		return round15(n+1) - 1;
 	}
@@ -181,7 +190,8 @@ public class Calculator {
 		String str = twoDForm.format(x);
 		return Double.valueOf(str);
 	}
-
+	
+	
 	public static void main(String[] args){
 		
 		Scanner keyboard = new Scanner(System.in);
@@ -190,17 +200,6 @@ public class Calculator {
 		while(!eq.equals("exit")){
 			eq = keyboard.nextLine();
 			
-//			eq = insertWhiteSpaces(eq);
-//			eq = insertMultiplication(eq);
-//			System.out.println("Prefix: " + eq);
-//			
-//			String[] array = infixToPostfix(eq);
-//			
-//			System.out.print("Postfix: ");
-//			for(String s: array){
-//				System.out.print(s + " ");
-//			}
-
 			System.out.println(" = " + calculate(eq));	
 		}
 		

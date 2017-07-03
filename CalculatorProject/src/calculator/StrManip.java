@@ -229,15 +229,11 @@ public class StrManip {
 	}
 	
 	public static boolean is1ArgFunction(String string){
-		
-		switch(string){
-		case "sin":
-		case "tan":
-		case "cos":
-		case "sqrt": return true;
-		default: return false;
+		if(Calculator.operatorMap.containsKey(string.toLowerCase())){
+			return (Calculator.operatorMap.get(string.toLowerCase()).getNumArgs() == 1);
 		}
 		
+		return false;
 	}	
 	
 	/*
