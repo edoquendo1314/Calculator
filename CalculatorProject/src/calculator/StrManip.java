@@ -6,22 +6,11 @@ public class StrManip {
 	 * String manipulation functions
 	 **/
 	
-	public static int countBrackets(String[] array){
-		int count = 0;
-		for(String s: array){
-			if(s.equals("(") || s.equals(")")){
-				count++;
-			}
-		}
-		
-		return count;
-	}
-	
 	/**
 	 * 
-	 * @param String original
-	 * @param String toInsert
-	 * @param int location
+	 * @param original
+	 * @param toInsert
+	 * @param location
 	 * @return String
 	 * 
 	 * Inserts the string toInsert at location.
@@ -44,6 +33,15 @@ public class StrManip {
 	}
 	
 	// need to insert white spaces before running this function
+	
+	/**
+	 * @params equation
+	 * @return String
+	 * Inserts multiplication symbol into equation that has implicit multiplications.
+	 * Eg: (a)(b) becomes (a)*(b)
+	 * 
+	 * Equation must have gone through the insertWhiteSpaces function before being passed to this function
+	 **/
 	public static String insertMultiplication(String equation){
 		// case 1  (a)x
 		// case 2   a(x) = a * (x)
@@ -91,7 +89,17 @@ public class StrManip {
 		
 		return equation;
 	}
-
+	
+	/**
+	 * 
+	 * @param equation
+	 * @return
+	 * 
+	 * Inserts white spaces before and after each operator or function in the equation.
+	 * This is necessary for easier tokenization of the equation. 
+	 * Multiple white spaces are not a problem as the String.split method tokenizes correctly
+	 * regardless of the number of white spaces
+	 **/
 	public static String insertWhiteSpaces(String equation){
 		
 		int i = 0;
@@ -136,13 +144,33 @@ public class StrManip {
 		return equation;
 	}	
 	
+	
+	/**
+	 * 
+	 * @param equation
+	 * @param location
+	 * @return
+	 * 
+	 * Helper function that returns the (int) location of the
+	 * next token in the equation
+	 * given the location right after the current token
+	 */
 	public static int nextTokenLocation(String equation, int location){
 		while(location < equation.length() && equation.charAt(location) == ' '){
 			location++;
 		}
 		return location;
 	}
-	
+
+	/**
+	 * 
+	 * @param equation
+	 * @param location
+	 * @return 
+	 * 
+	 * Helper function that returns the (string) next token
+	 * given the location immediately after the current location
+	 */	
 	public static String nextToken(String equation, int location){
 		String token = "";
 		
@@ -156,6 +184,15 @@ public class StrManip {
 		return token;
 	}
 	
+	/**
+	 * 
+	 * @param equation
+	 * @param currentLocation
+	 * @return
+	 * 
+	 * Helper function that returns the (String) current token,
+	 * given the location of the first character of the token
+	 */
 	public static String currentToken(String equation, int currentLocation){
 		String token = "";
 		
@@ -168,6 +205,10 @@ public class StrManip {
 	}	
 	
 
+	/*
+	 * Functions for checking string type (numbers, operators, brackets, functions)
+	 */
+	
 	public static boolean isNumber(String string){
 		return string.matches("\\d+(\\.\\d+)?");
 	}
@@ -193,6 +234,21 @@ public class StrManip {
 		}
 		
 	}	
+	
+	/*
+	 * Misc functions
+	 */
+	
+	public static int countBrackets(String[] array){
+		int count = 0;
+		for(String s: array){
+			if(s.equals("(") || s.equals(")")){
+				count++;
+			}
+		}
+		
+		return count;
+	}
 	
 	public StrManip() {
 		// TODO Auto-generated constructor stub
