@@ -266,9 +266,14 @@ public class Calculator {
 			eq = keyboard.nextLine();
 			//testFunction(eq);
 			
-			System.out.println(StrManip.insertWhiteSpaces(eq));
+			//System.out.println(StrManip.insertWhiteSpaces(eq));
 			
-			//System.out.println(" = " + calculate(eq));	
+			System.out.println(" = " + calculate(eq));
+			//testFunction(eq);
+			
+			//System.out.println(StrManip.insertWhiteSpaces(eq));
+			
+			
 		}
 	}
 	
@@ -284,7 +289,8 @@ public class Calculator {
 		for(String s: array){
 			System.out.print(s + " ");
 		}
-		System.out.println();		
+		System.out.println();	
+		//System.out.println(calculate(eq));
 	}
 	
 }

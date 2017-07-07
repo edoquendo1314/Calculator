@@ -134,7 +134,7 @@ public class StrManip {
 //						System.out.println("moving to next number");
 					}
 					// move past next number
-					while(j < equation.length() && isNumber(equation.substring(j, j+1))){
+					while(j < equation.length() && (isNumber(equation.substring(j, j+1)) || equation.substring(j, j+1).equals("."))){
 						j++;
 						i++;
 //						System.out.println("moving past next number");
