@@ -123,6 +123,7 @@ public class Calculator {
 	 **/
 	public static String[] infixToPostfix(String string){
 		string = string.trim(); // remove leading and trailing white spaces
+		//System.out.println(string);
 		String[] array = string.split("\\s+");
 		String[] outputArray = new String[array.length - StrManip.countSpecialChars(array)];
 		LinkedList<String> fifo = new LinkedList<String>();
@@ -132,7 +133,7 @@ public class Calculator {
 		
 		while(i < array.length){
 			if(StrManip.isNumber(array[i])){
-				fifo.add(array[i]);
+				fifo.add(array[i]);				
 			}else if(StrManip.isOperator(array[i]) || operatorMap.containsKey(array[i])){
 				try{
 					while(!operatorStack.isEmpty() && 
@@ -185,6 +186,7 @@ public class Calculator {
 	public static double calculate(String equation){
 		equation = StrManip.insertWhiteSpaces(equation);
 		equation = StrManip.insertMultiplication(equation);
+//		System.out.println(equation);
 		String[] array = infixToPostfix(equation);
 		double result = evaluatePostfix(array);
 		return result;
@@ -264,7 +266,9 @@ public class Calculator {
 			eq = keyboard.nextLine();
 			//testFunction(eq);
 			
-			System.out.println(" = " + calculate(eq));	
+			System.out.println(StrManip.insertWhiteSpaces(eq));
+			
+			//System.out.println(" = " + calculate(eq));	
 		}
 	}
 	

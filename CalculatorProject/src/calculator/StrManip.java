@@ -103,8 +103,10 @@ public class StrManip {
 	public static String insertWhiteSpaces(String equation){
 		
 		int i = 0;
+		String prevToken = null;
 		while(i < equation.length()){
-			if(isOperator(equation.substring(i, i+1)) || isSpecialChar(equation.charAt(i))){
+			String currentString = equation.substring(i, i+1);
+			if(isOperator(currentString) || isSpecialChar(equation.charAt(i))){
 				equation = equation.substring(0, i) + " " 
 						   + equation.substring(i, i+1) + " " 
 						   + equation.substring(i+1, equation.length());
@@ -116,13 +118,36 @@ public class StrManip {
 				// so we increment i by 2 in here, then by 1 again outside the if
 				// to get to the next number in the equation
 				
+				if((prevToken == null || isOperator(prevToken)) && currentString.equals("-")){
+					// i+1 is the minus sign
+					i++;
+					equation = equation.substring(0, i) + "( 0 "
+							   + equation.substring(i, equation.length());
+					i += 4;
+					// updated i to still be pointing to minus sign
+					
+					int j = i+1;
+					// move to next number
+					while(j < equation.length() && equation.charAt(j) == ' '){
+						j++;
+						i++;
+//						System.out.println("moving to next number");
+					}
+					// move past next number
+					while(j < equation.length() && isNumber(equation.substring(j, j+1))){
+						j++;
+						i++;
+//						System.out.println("moving past next number");
+					}
+					equation = equation.substring(0, j) + " ) " + equation.substring(j, equation.length());
+					
+					//System.out.println("got a negative number boys!");
+				}
+				
 				i += 2;
-			}
-			
-			String currentString = equation.substring(i, i+1);
-			
+			}			
 			// insert white spaces around functions (ie: log, sin, cos, etc)
-			if(!isOperator(currentString) && !isSpecialChar(currentString) && !currentString.equals(" ") && !isNumber(currentString)){
+			else if(!isOperator(currentString) && !isSpecialChar(currentString) && !currentString.equals(" ") && !isNumber(currentString) && !currentString.equals(".")){
 				String token = "";
 				int j = i;
 				
@@ -253,7 +278,19 @@ public class StrManip {
 		}
 		
 		return false;
-	}	
+	}
+	
+	public static boolean isFunction(String string){
+		switch(string.toLowerCase()){
+		
+		case "+":
+		case "-":
+		case "*":
+		case "/":
+		case "^": return false;
+		default: return true;
+		}
+	}
 	
 	/*
 	 * Misc functions
@@ -277,6 +314,15 @@ public class StrManip {
 		return count;
 	}
 	
+	/**
+	 * 	
+	 * @param equation
+	 * @return
+	 * 
+	 * Turns the equation string into an array of tokens.
+	 * Every part of the equation is turned into an element of the array,
+	 * including commas and parentheses.
+	 */
 	public static String[] tokenize(String equation){
 		equation = insertWhiteSpaces(equation);
 		equation = equation.trim();
