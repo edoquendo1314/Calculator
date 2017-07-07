@@ -164,6 +164,7 @@ public class StrManip {
 				i += 1 + token.length();
 			}
 			
+			prevToken = currentString;
 			i++;
 		}
 		
