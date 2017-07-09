@@ -131,17 +131,13 @@ public class StrManip {
 					while(j < equation.length() && equation.charAt(j) == ' '){
 						j++;
 						i++;
-//						System.out.println("moving to next number");
 					}
 					// move past next number
 					while(j < equation.length() && (isNumber(equation.substring(j, j+1)) || equation.substring(j, j+1).equals("."))){
 						j++;
 						i++;
-//						System.out.println("moving past next number");
 					}
 					equation = equation.substring(0, j) + " ) " + equation.substring(j, equation.length());
-					
-					//System.out.println("got a negative number boys!");
 				}
 				
 				i += 2;

@@ -23,20 +23,24 @@ public class JCalcButtonListener implements ActionListener {
 
 		JTextField displayArea = jcalc.getDisplayArea();
 		String displayedText = displayArea.getText();
-
-		if (!button.getText().equals("=")) {
+		String buttonText = button.getText();
+		
+		
+		if (!buttonText.equals("=")) {
 			// if something other than "=" was pressed
 
-			if (lastButton != null && lastButton.getText().equals("=") && StrManip.isNumber(button.getText())) {
+			if (lastButton != null && lastButton.getText().equals("=") && (StrManip.isNumber(buttonText) || StrManip.is1ArgFunction(buttonText))) {
 				// if the last button pressed was an equal sign
 				// display area is displaying the result of some expression evaluation
 				// if the next button we press is a number, we are starting a new expression
 				// and overwriting previous results
 				
-				if (button.getText().equals("x")) {
+				if (buttonText.equals("x")) {
 					displayedText = "*";
+				}else if(StrManip.is1ArgFunction(buttonText)){
+					displayedText = buttonText + "(";
 				}else{
-					displayedText = button.getText();
+					displayedText = buttonText;
 				}
 
 			} else {
@@ -46,11 +50,21 @@ public class JCalcButtonListener implements ActionListener {
 				// in any case, we are appending the expression or number in display area
 				
 				if (displayedText.equals(" ")) {
-					displayedText = button.getText();
-				} else if (button.getText().equals("x")) {
+					if(StrManip.is1ArgFunction(buttonText)){
+						displayedText = buttonText + "(";
+					}else if(StrManip.isNumber(buttonText)){
+						displayedText = buttonText;						
+					}else if(!buttonText.equals("-")){
+						displayedText = "0" + buttonTextToString(buttonText);
+					}else{
+						displayedText = buttonTextToString(buttonText);
+					}
+				} else if (buttonText.equals("x")) {
 					displayedText += "*";
+				}else if(StrManip.is1ArgFunction(buttonText)){
+					displayedText += buttonText + "(";
 				} else {
-					displayedText += button.getText();
+					displayedText += buttonText;
 				}
 			}
 		} else {
@@ -68,6 +82,14 @@ public class JCalcButtonListener implements ActionListener {
 
 		displayArea.setText(displayedText);
 
+	}
+	
+	private String buttonTextToString(String buttonText){
+		if(buttonText.equals("x")){
+			return "*";
+		}else{
+			return buttonText;
+		}
 	}
 
 }
