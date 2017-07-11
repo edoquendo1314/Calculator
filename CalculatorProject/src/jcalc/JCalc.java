@@ -1,16 +1,16 @@
 package jcalc;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
-import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -22,8 +22,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import calculator.Calculator;
 
 public class JCalc extends JFrame {
 
@@ -44,42 +42,58 @@ public class JCalc extends JFrame {
 	public void createAndDisplayGUI(){
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
 		JPanel contentPane = new JPanel();
-		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+		
+		GridBagLayout layout = new GridBagLayout();
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = 1;
+		gbc.gridx = 0;		
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
+		
+//		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+		contentPane.setLayout(layout);
 		
 		displayArea = new JTextField();
-		displayArea.setSize(this.getWidth(), 20);
+//		displayArea.setSize(this.getWidth(), 60);
+		
 		displayArea.setEditable(false);
 		displayArea.setAlignmentX(JTextPane.CENTER_ALIGNMENT);
 		displayArea.setText(" ");
-		displayArea.setHorizontalAlignment(SwingConstants.RIGHT);	
+		displayArea.setHorizontalAlignment(SwingConstants.RIGHT);
 		//contentPane.addKeyListener(new jDisplayAreaActionListener(displayArea));
 		
-		
-		
-		masterButtonPanel = new JPanel();
+		masterButtonPanel = new JPanel(); //masterButtonPanel is parent of numButtonPanel and operatorPanel
 		
 		numButtonPanel = new JPanel();
+		operatorPanel = new JPanel();
 		
 		initNumButtons(numButtonArray, numButtonPanel);
 		
-		operatorPanel = new JPanel();
 		
-		JButton[] operatorButtonArray = null;
+		ArrayList<JButton> operatorButtonArray = new ArrayList<JButton>();
 		initOperatorButtons(operatorButtonArray, operatorPanel);
 		
 		setMasterButtonPanelLayout();		
 		
 		keyBinding(contentPane);
 		
-		contentPane.add(displayArea);
-		contentPane.add(masterButtonPanel);
+		displayArea.setPreferredSize(new Dimension(this.getWidth(), 60));
+		
+		gbc.gridy = 0;  // adding displayArea to first row
+		contentPane.add(displayArea, gbc);
+		
+		gbc.gridy = 1;  // adding the masterButtonPanel to second row
+		contentPane.add(masterButtonPanel, gbc);
+		
 		setContentPane(contentPane);
+		//this.getContentPane().add(contentPane);
 		setLocationByPlatform(true);
-		pack();
 		
-		
+		pack();	
 		
 		setVisible(true);
 	}
@@ -87,7 +101,6 @@ public class JCalc extends JFrame {
 	public void keyBinding(JPanel panel){
 		InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap actionMap = panel.getActionMap();
-		
 		
 		String[] keyArray = {
 				"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
@@ -131,12 +144,6 @@ public class JCalc extends JFrame {
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DECIMAL, 0), ".");
 		actionMap.put(".", newAction("."));
 		
-			
-//		
-//		inputMap.put(one, "action");
-//		actionMap.put("action", action);
-		
-		
 	}
 
 	
@@ -154,14 +161,14 @@ public class JCalc extends JFrame {
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
+		
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridwidth = 3;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		masterButtonPanel.add(numButtonPanel, gbc);
 		
-		
-		gbc.gridwidth = 1;
 		gbc.gridx = gbc.RELATIVE;
 		gbc.gridy = 0;
 		gbc.insets = new Insets(0,10,10,0);
@@ -172,7 +179,6 @@ public class JCalc extends JFrame {
 	
 	public void initNumButtons(JButton[] buttonArray, JPanel buttonPanel){
 		buttonArray = new JButton[10];
-		
 		buttonPanel.setLayout(new GridLayout(4, 3, 5, 5));
 		
 		for(int i = buttonArray.length - 1; i >= 0; i--){
@@ -180,6 +186,7 @@ public class JCalc extends JFrame {
 				JButton invisButton = new JButton();
 				invisButton.setVisible(false);
 				buttonPanel.add(invisButton);
+
 			}
 			buttonArray[i] = new JButton(Integer.toString(i));
 			buttonPanel.add(buttonArray[i]);
@@ -192,23 +199,31 @@ public class JCalc extends JFrame {
 		
 	}
 	
-	public void initOperatorButtons(JButton[] buttonArray, JPanel buttonPanel){
-		buttonArray = new JButton[NUM_OPERATORS];
+	public void initOperatorButtons(ArrayList<JButton> buttonArray, JPanel buttonPanel){
 		
-		buttonArray[0] = new JButton("+");
-		buttonArray[1] = new JButton("-");
-		buttonArray[2] = new JButton("x");
-		buttonArray[3] = new JButton("/");
-		buttonArray[4] = new JButton("=");
-		buttonArray[5] = new JButton("sin");
-		buttonArray[6] = new JButton("(");
-		buttonArray[7] = new JButton(")");
+		buttonArray.add(new JButton("+"));
+		buttonArray.add(new JButton("-"));
+		buttonArray.add(new JButton("x"));
+		buttonArray.add(new JButton("/"));
+		buttonArray.add(new JButton("="));
+		buttonArray.add(new JButton("("));
+		buttonArray.add(new JButton(")"));
+		buttonArray.add(new JButton("clr"));
+		buttonArray.add(new JButton("sin"));
+		buttonArray.add(new JButton("cos"));
+		buttonArray.add(new JButton("tan"));
+		buttonArray.add(new JButton("asin"));
+		buttonArray.add(new JButton("acos"));
+		buttonArray.add(new JButton("atan"));
+		buttonArray.add(new JButton("sec"));
+		buttonArray.add(new JButton("csc"));
+		buttonArray.add(new JButton("cot"));
 		
 		buttonPanel.setLayout(new GridLayout(4, 1, 5, 5));
 		
-		for(int i = 0; i < NUM_OPERATORS; i++){
-			buttonArray[i].addActionListener(jcbl);
-			buttonPanel.add(buttonArray[i]);
+		for(int i = 0; i < buttonArray.size(); i++){
+			buttonArray.get(i).addActionListener(jcbl);
+			buttonPanel.add(buttonArray.get(i));
 		}
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 	}
@@ -217,8 +232,16 @@ public class JCalc extends JFrame {
 		return displayArea;
 	}
 	
+	
+	public void paint(Graphics g){
+		super.paint(g);
+		displayArea.setPreferredSize(new Dimension(this.getWidth(), (int)(this.getHeight()*0.5)));
+		System.out.println(this.getWidth());
+		System.out.println(displayArea.getWidth());
+		System.out.println(this.getContentPane().getWidth());
+	}
+	
 	public static void main(String[] args){
-		
 		JCalc jcalc = new JCalc();
 		SwingUtilities.invokeLater(new Runnable(){
 

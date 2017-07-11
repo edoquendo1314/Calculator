@@ -27,6 +27,10 @@ public class Calculator {
 		operatorMap.put("sec", new Operator("sec", 1, 5));
 		operatorMap.put("csc", new Operator("csc", 1, 5));
 		
+		operatorMap.put("asin", new Operator("asin", 1, 5));
+		operatorMap.put("acos", new Operator("acos", 1, 5));
+		operatorMap.put("atan", new Operator("atan", 1, 5));
+		
 		operatorMap.put("sqrt", new Operator("sqrt", 1, 4));
 		operatorMap.put("abs", new Operator("abs", 1, 5));
 		operatorMap.put("ln", new Operator("ln", 1, 5));
@@ -57,7 +61,11 @@ public class Calculator {
 			case "+": return a+b;
 			case "-": return a-b;
 			case "*": return a*b;
-			case "/": return a/b;
+			case "/": if(b != 0){
+						return a/b;
+					  }else{
+						  throw new IllegalArgumentException("Cannot divide by 0");
+					  }
 			case "^": return Math.pow(a, b);
 			case "log": return logN(a, b);
 			default: return -1f;
@@ -80,21 +88,28 @@ public class Calculator {
 		case "cot": 
 			if(runFunction("tan", operand) == 0){
 				System.out.println("Cannot divide by 0");
-				return 0;
+				throw new IllegalArgumentException("Cannot divide by 0");
 			}
 			return roundDouble(1.0/runFunction("tan", operand));
 		case "sec": 
 			if(runFunction("cos", operand) == 0){
 				System.out.println("Cannot divide by 0");
-				return 0;
+				throw new IllegalArgumentException("Cannot divide by 0");				
 			}
 			return roundDouble(1.0/runFunction("cos", operand));
 		case "csc": 
 			if(runFunction("sin", operand) == 0){
 				System.out.println("Cannot divide by 0");
-				return 0;
+				throw new IllegalArgumentException("Cannot divide by 0");
 			}
 			return roundDouble(1.0/runFunction("sin", operand));
+			
+		case "asin":
+			return roundDouble(Math.asin(n));
+		case "acos":
+			return roundDouble(Math.acos(n));
+		case "atan":
+			return roundDouble(Math.atan(n));
 		default: return 0.0;
 		}			
 	}		
@@ -218,6 +233,7 @@ public class Calculator {
 					result = curResult;
 				}catch(Exception e){
 					System.out.println("something wrong with function processing");
+					throw e;
 				}
 			}
 			else{
@@ -232,6 +248,7 @@ public class Calculator {
 					
 				}catch(EmptyStackException e){
 					System.out.println("something wrong with equation");
+					throw e;
 				}
 			}
 			

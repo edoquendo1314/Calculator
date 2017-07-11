@@ -25,8 +25,11 @@ public class JCalcButtonListener implements ActionListener {
 		String displayedText = displayArea.getText();
 		String buttonText = button.getText();
 		
-		
-		if (!buttonText.equals("=")) {
+		if(buttonText.equals("clr")){
+			
+			displayedText = "";
+			
+		} else if (!buttonText.equals("=")) {
 			// if something other than "=" was pressed
 
 			if (lastButton != null && lastButton.getText().equals("=") && (StrManip.isNumber(buttonText) || StrManip.is1ArgFunction(buttonText))) {
@@ -73,7 +76,12 @@ public class JCalcButtonListener implements ActionListener {
 			if (lastButton != null && !lastButton.getText().equals("=")) {
 				// makes sure we aren't double pressing the "=" button
 				String str = displayedText.trim();
-				str = Calculator.calculate(str) + "";
+				try{
+					str = Calculator.calculate(str) + "";					
+				}catch (Exception exception){
+					
+				}
+				
 				displayedText = str;
 			}
 		}
