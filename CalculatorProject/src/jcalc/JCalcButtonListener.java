@@ -77,7 +77,7 @@ public class JCalcButtonListener implements ActionListener {
 				// makes sure we aren't double pressing the "=" button
 				String str = displayedText.trim();
 				try{
-					str = Calculator.calculate(str) + "";					
+					str = StrManip.formatNumber(Calculator.calculate(str));					
 				}catch (Exception exception){
 					
 				}

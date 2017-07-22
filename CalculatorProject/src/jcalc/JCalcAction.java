@@ -76,7 +76,7 @@ public class JCalcAction extends AbstractAction{
 			if (lastInput != null && !lastInput.equals("ENTER")) {
 				// makes sure we aren't double pressing the "=" button
 				String str = displayedText.trim();
-				str = Calculator.calculate(str) + "";
+				str = StrManip.formatNumber(Calculator.calculate(str));
 
 				System.out.println(displayArea.getText());
 				displayedText = str;

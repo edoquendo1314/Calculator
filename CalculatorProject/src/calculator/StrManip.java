@@ -1,5 +1,8 @@
 package calculator;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class StrManip {
 
 	/**
@@ -328,6 +331,18 @@ public class StrManip {
 		return array;
 	}
 	
+	public static String formatNumber(float input){
+		NumberFormat nf = new DecimalFormat("###########.###############");
+		String output = nf.format(input);
+		return output;
+	}
+
+
+	public static String formatNumber(double input){
+		NumberFormat nf = new DecimalFormat("###########.###############");
+		String output = nf.format(input);
+		return output;
+	}	
 	public StrManip() {
 		// TODO Auto-generated constructor stub
 	}
